@@ -1,0 +1,10 @@
+﻿-itinéraire chat cercle
+
+-affichage du score (secondaire) 
+
+
+-grille 3*3 avec pygame : 
+	-convertir action en mouvement pygame
+
+
+grille 5*5
