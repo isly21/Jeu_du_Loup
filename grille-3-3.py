@@ -88,8 +88,8 @@ class EnvGrid(object):
         """
             Action: 0, 1, 2, 3
         """
-        self.y = max(0, min(self.y + self.actions[action][0],2)) #1 0
-        self.x = max(0, min(self.x + self.actions[action][1],2)) #0 0
+        self.y = max(0, min(self.y + self.actions[action][0],2)) 
+        self.x = max(0, min(self.x + self.actions[action][1],2)) 
 
         return (self.y*3+self.x+1) , self.grid[self.y][self.x] 
 
@@ -102,9 +102,7 @@ class EnvGrid(object):
         voiture.position.y = max(0, min(voiture.position.y + self.actions2[action][1],186)) #1 0
         voiture.position.x = max(0, min(voiture.position.x + self.actions2[action][0],186)) #0 0
         pygame.time.wait(125)
-        #voiture.position = voiture.position.move(voiture.position.x,voiture.position.y)
         
-        #return (self.y*3+self.x+1) , self.grid[self.y][self.x] 
 
 
 def take_action(st, Q, eps):

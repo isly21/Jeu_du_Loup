@@ -4,7 +4,10 @@
 
 
 -grille 3*3 avec pygame : 
-	-convertir action en mouvement pygame
+	-convertir action en mouvement pygame ok
+	-corriger boucle infini 
+
+-grille 5*5 :
+	q table incomplete
 
 
-grille 5*5
