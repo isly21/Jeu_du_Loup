@@ -81,7 +81,7 @@ class EnvGrid(object):
         return self.grid[self.y][self.x] == 1 # finish si etat final = etat actuel = 1
 
     def is_finished2(self,voiture):
-        return self.grid[self.y][self.x] == 1 or (voiture.position.x == 186 and voiture.position.y == 0)
+        return self.grid[self.y][self.x] == 1 #or (voiture.position.x == 186 and voiture.position.y == 0)
 
     # return l'état suivant 
     def step(self, action):
@@ -98,7 +98,7 @@ class EnvGrid(object):
         """
             Action: 0, 1, 2, 3
         """
-        print("action :",action)
+        #print("action :",action)
         voiture.position.y = max(0, min(voiture.position.y + self.actions2[action][1],186)) #1 0
         voiture.position.x = max(0, min(voiture.position.x + self.actions2[action][0],186)) #0 0
         pygame.time.wait(125)
@@ -113,7 +113,13 @@ def take_action(st, Q, eps):
         action = np.argmax(Q[st]) # chercher dans Q la meilleur action en retournant la valeur de l'indice 
     return action
 
+def collision(perso1,perso2):
+    #print("loup : ("perso1.position.x,",",perso1.position.y")")
+    if perso1.position.x == perso2.position.x and perso1.position.y == perso2.position.y:
+        #print("collision")
+        return True
 
+    return False
 
 class Voiture(Perso):
     def __init__(self, x, y, img="img/voiture.png"):
@@ -157,11 +163,16 @@ class Voiture(Perso):
 
 
     def reset_position(self):
-        self.position.x = 140
-        self.position.y = 140
+        self.position.x = 0
+        self.position.y = 0
 
+class Maison(Perso):
+    def __init__(self, x, y, img="img/maison.png"):
+        return Perso.__init__(self,x,y,img)
 
-
+    def reset_position(self):
+        self.position.x = 186
+        self.position.y = 0
 
 
 env = EnvGrid()
@@ -214,7 +225,7 @@ pygame.init()
 fenetre = pygame.display.set_mode((HEIGHT, WIDTH))
 
 fond = pygame.image.load("img/grille3-3_2.png").convert()
-fenetre.blit(fond, (0,0))
+
 
 #creation des persos
 voiture = Voiture(0,0)
@@ -223,6 +234,7 @@ obstacle = Perso(93, 93, "img/obstacle.png")
 
 maison = Perso(186, 0, "img/maison.png")
 
+fenetre.blit(fond, (0,0))
 fenetre.blit(voiture.skin, voiture.position)
 fenetre.blit(obstacle.skin, obstacle.position)
 fenetre.blit(maison.skin, maison.position)
@@ -238,32 +250,48 @@ fini = False
 st = env.reset()
 #BOUCLE INFINIE
 continuer = 1
-while continuer and not env.is_finished2(voiture):
-    fenetre.fill(pygame.Color("black"))
-    clock.tick(30)
+nbCollisions = 0
+while 1 and not env.is_finished2(voiture): 
+    print(" pas dans la boucle 2") 
 
     for event in pygame.event.get():    #Attente des événements
-        if event.type == QUIT:
-            continuer = 0
+            if event.type == QUIT:
+                #continuer = 0
+                exit()
+
+
+        
+
+    fenetre.fill(pygame.Color("black"))
+    clock.tick(30)
 
     #voiture.position.x = 186
     #voiture.position.y = 186
     # test
     
-
-        
+    
+    print("dans la boucle 2")    
     # env.show()
-    # print("x,y : ",env.x,",",env.y)
-    #at = int(input("$>"))
+    
     at = take_action(st, Q, 0.4)
 
     env.step2(at, voiture)
-    print("voiture x,y : ",voiture.position.x, "," , voiture.position.y)
+    #print("voiture x,y : ",voiture.position.x, "," , voiture.position.y)
     env.step(at)
+    
+    if  collision(voiture,maison):
+        nbCollisions +=1
+        print("nbCollisions : ",nbCollisions)
+        voiture.reset_position()
+        st = env.reset()
+        
 
-    fenetre.blit(fond, (0,0))
-    fenetre.blit(voiture.skin, voiture.position)
-    fenetre.blit(obstacle.skin, obstacle.position)
+
+
+
+    # fenetre.blit(fond, (0,0))
+    # fenetre.blit(voiture.skin, voiture.position)
+    # fenetre.blit(obstacle.skin, obstacle.position)
 
         #print("s", stp1)
         #print("r")
@@ -278,7 +306,7 @@ while continuer and not env.is_finished2(voiture):
  
     
    
-    voiture.joueurV(event)
+    #voiture.joueurV(event)
     fenetre.blit(fond, (0,0))
     fenetre.blit(voiture.skin, voiture.position)
     fenetre.blit(obstacle.skin, obstacle.position)
@@ -287,5 +315,5 @@ while continuer and not env.is_finished2(voiture):
     #Rafraichissement
     pygame.display.flip()
 
-
+    print(env.is_finished2(voiture))
     

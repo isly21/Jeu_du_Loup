@@ -353,7 +353,7 @@ for _ in range(2000):
 for s in range(1, 26):
     print(s, Q[s]) 
 
-input()
+#input()
 # test
 st = env.reset()
 
@@ -365,13 +365,13 @@ fenetre = pygame.display.set_mode((HEIGHT, WIDTH))
 
 # création et chargement de la grille
 fond = pygame.image.load("img/grille.png").convert()
-fenetre.blit(fond, (0,0))
+
 
 #creation des persos
 chat = Chat(140,140)  #HEIGHT-30,WIDTH-30)
 loup = Loup(0,0) #5,4
 
-
+fenetre.blit(fond, (0,0))
 fenetre.blit(chat.skin, chat.position)
 fenetre.blit(loup.skin, loup.position)
 #Rafraîchissement de l'écran
@@ -388,9 +388,9 @@ continuer = 1
 
 # niveau = Niveau('level1.txt')
 # niveau.generer()
-
+nbCollisions = 0
 #BOUCLE INFINIE 
-while continuer and not env.is_finished2(loup):
+while 1 and not env.is_finished2(loup):
     fenetre.fill(pygame.Color("black"))
 
     clock.tick(30)
@@ -398,17 +398,25 @@ while continuer and not env.is_finished2(loup):
     key = pygame.key.get_pressed()
     for event in pygame.event.get():    #Attente des événements
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_F4 and (key[K_LALT] or key[K_LALT])): # on appuye sur alt+f4 pour quitter
-            continuer = 0
+            #continuer = 0
+            exit()
 
         #chat.joueurC(event)
         #loup.joueurL(event)
 
-        
-        at = take_action(st, Q, 0.4)
 
-        env.step2(at, loup)
-        print("loup x,y : ",loup.position.x, "," , loup.position.y)
-        env.step(at)
+    at = take_action(st, Q, 0.4)
+
+    env.step2(at, loup)
+    print("loup x,y : ",loup.position.x, "," , loup.position.y)
+    env.step(at)
+
+    if  collision(loup,chat):
+        nbCollisions +=1
+        print("nbCollisions : ",nbCollisions)
+        loup.reset_position()
+        chat.reset_position()
+        st = env.reset()
 
         #print("collision : ",pygame.sprite.collide_mask(chat,loup))
         #loup.collide2(chat)
