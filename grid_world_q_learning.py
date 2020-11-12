@@ -18,6 +18,9 @@ class EnvGrid(object):
         self.y = 2
         self.x = 0
 
+        self.yMaison = 0
+        self.xMaison = 2
+
         self.actions = [
             [-1, 0], # Up action 0
             [1, 0], #Down action 1
@@ -43,6 +46,23 @@ class EnvGrid(object):
 
         return (self.y*3+self.x+1) , self.grid[self.y][self.x]
 
+    def stepMaison(self, action):
+        """
+            Action: 0, 1, 2, 3
+        """
+        #env.grid[self.y][self.x] == 0
+        self.y = max(0, min(self.y + self.actions[action][0],2))
+        self.x = max(0, min(self.x + self.actions[action][1],2))
+
+        #env.grid[self.y][self.x] == 1
+
+        #print(env.grid)
+
+        print(" maison y,x : ",self.y,", ",self.x)
+        #input()
+        return (self.y*3+self.x+1) , self.grid[self.y][self.x]
+        #return (self.y, self.x)
+
     def show(self):
         """
             Show the grid
@@ -60,6 +80,42 @@ class EnvGrid(object):
     def is_finished(self):
         return self.grid[self.y][self.x] == 1
 
+class Maison(object):
+    """docstring for Maison"""
+    def __init__(self, y, x):
+        super(Maison, self).__init__()
+        self.y = y
+        self.x = x
+        print(" position init maison y,x : ",self.y,", ",self.x)
+
+    def step(self, action,env):
+        """
+            Action: 0 haut , 1 bas , 2 gauche , 3 droite
+        """
+        #env.grid[self.y][self.x] == 0
+    
+        
+
+        y2 = max(0, min(self.y + env.actions[action][0],2))
+        x2 = max(0, min(self.x + env.actions[action][1],2))
+        # si la maison ne passe pas devant un mure
+        if env.grid[y2][x2] != -1:
+
+            env.grid[self.y][self.x] = 0
+            self.y = y2
+            self.x = x2 
+            env.grid[self.y][self.x] = 1
+            
+        
+
+        #print(env.grid)
+
+        print(" maison y,x : ",self.y,", ",self.x)
+        #input()
+        return (self.y, self.x)
+
+
+
 def take_action(st, Q, eps):
     # Take an action
     if random.uniform(0, 1) < eps:
@@ -71,9 +127,27 @@ def take_action(st, Q, eps):
 
     return action
 
+def deplacementMaison(action, env):
+    #Up action 0
+    #Down action 1
+    # Left action 2
+    # Right action 3
+    pass
+    # [0, 0, 1],  
+    # [0, -1, 0],
+    # [0, 0, 0]
+
+    # if action == 0 :
+    #     try:
+    #         env.grid = 
+    # elif action == 1:
+    #     try:
+    #         env.grid = 
+
 if __name__ == '__main__':
     env = EnvGrid()
     st = env.reset()
+    maison = Maison(0,2)
 
     Q = [
         [0, 0, 0, 0],
@@ -98,6 +172,8 @@ if __name__ == '__main__':
             at = take_action(st, Q, 0.4) # recuperer val max de Q
 
             stp1, r = env.step(at)
+
+            
             #print("s", stp1)
             #print("r", r)
 
@@ -114,8 +190,16 @@ if __name__ == '__main__':
     st = env.reset()
     while not env.is_finished():
         env.show()
-        print("x,y : ",env.x,",",env.y)
-        #at = int(input("$>"))
+        #print("x,y : ",env.x,",",env.y)
+        #actionM = int(input("$>"))
+        #env.stepMaison(1)
+        atM = int(input(">"))
+        yM, xM = maison.step(atM, env)
+
+        
+        #maison.step(1,env)
+        print(env.grid)
+        input()
         at = take_action(st, Q, 0.4)
 
         env.step(at)
@@ -124,9 +208,15 @@ if __name__ == '__main__':
         #print("r")
 
         # exploitation
-        #atp1 = take_action(stp1, Q, 0.0)
-        #Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
+        atp1 = take_action(stp1, Q, 0.1)
+        Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
 
         # st = stp1
-    print("x,y : ",env.x,",",env.y)  
-    env.show()
+    print("y,x : ",env.y,",",env.x)  
+    #env.show()
+
+    #print("res",env.grid[2][2])
+     # [-1, 0], # Up action 0
+     #        [1, 0], #Down action 1
+     #        [0, -1], # Left action 2
+     #        [0, 1] # Right action 3
