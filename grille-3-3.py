@@ -81,7 +81,7 @@ class EnvGrid(object):
         return self.grid[self.y][self.x] == 1 # finish si etat final = etat actuel = 1
 
     def is_finished2(self,voiture):
-        return self.grid[self.y][self.x] == 1 #or (voiture.position.x == 186 and voiture.position.y == 0)
+        return self.grid[self.y][self.x] == 1 and (voiture.position.x == 186 and voiture.position.y == 0)
 
     # return l'état suivant 
     def step(self, action):
@@ -174,7 +174,45 @@ class Maison(Perso):
         self.position.x = 186
         self.position.y = 0
 
+    def joueurM(self, event, env):
+        #print("voiture pos x,y = (",self.position.x,self.position.y,")")
+        if event.type == KEYDOWN:
 
+            if event.key == K_DOWN: #Si "flèche bas"
+                    
+                    #si le perso n'est pas tout en bas 
+                    if self.position.y < HEIGHT/2: 
+                        #On descend le perso
+                        self.position = self.position.move(0,93) 
+
+                        #env.grid[]
+                        
+                        input()
+                    
+            if event.key == K_UP:   #Si "flèche haut"
+
+                
+                #print("pos y: ",self.position.y) 
+
+                # si le perso n'est pas tout en haut
+                if self.position.y > 10:
+                    #le perso monte
+                    self.position = self.position.move(0,-93)
+                    
+
+            if event.key == K_LEFT: #Si "flèche gauche"
+
+                    #si le perso n'est pas tout à gauche
+                    if self.position.x > 11:
+                    # le perso tourne à gauche
+                       self.position = self.position.move(-93,0)   
+                       #print("pos x: ",self.position.x) 
+
+            if event.key == K_RIGHT: #Si "flèche droite"
+                    #print("pos x: ",self.position.x) 
+                    #si le perso n'est pas tout à gauche
+                    if self.position.x < 140:#WIDTH:
+                       self.position = self.position.move(93,0) 
 env = EnvGrid()
 st = env.reset()
 
@@ -232,7 +270,7 @@ voiture = Voiture(0,0)
 
 obstacle = Perso(93, 93, "img/obstacle.png")
 
-maison = Perso(186, 0, "img/maison.png")
+maison = Maison(186, 0)
 
 fenetre.blit(fond, (0,0))
 fenetre.blit(voiture.skin, voiture.position)
@@ -245,32 +283,31 @@ pygame.key.set_repeat(400, 30)
 
 clock = pygame.time.Clock()
 
-fini = False
 
 st = env.reset()
+
 #BOUCLE INFINIE
-continuer = 1
+
 nbCollisions = 0
-while 1 and not env.is_finished2(voiture): 
-    print(" pas dans la boucle 2") 
-
-    for event in pygame.event.get():    #Attente des événements
-            if event.type == QUIT:
-                #continuer = 0
-                exit()
-
-
-        
-
+while 1 or not env.is_finished2(voiture): 
     fenetre.fill(pygame.Color("black"))
+    #print(" pas dans la boucle 2") 
     clock.tick(30)
 
-    #voiture.position.x = 186
-    #voiture.position.y = 186
+    key = pygame.key.get_pressed()
+    for event in pygame.event.get():    #Attente des événements
+        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_F4 and (key[K_LALT] or key[K_LALT])):
+            exit()
+
+        maison.joueurM(event, env)
+
+    # fenetre.fill(pygame.Color("black"))
+    # clock.tick(30)
+
     # test
     
     
-    print("dans la boucle 2")    
+    #print("dans la boucle 2")    
     # env.show()
     
     at = take_action(st, Q, 0.4)
@@ -312,8 +349,8 @@ while 1 and not env.is_finished2(voiture):
     fenetre.blit(obstacle.skin, obstacle.position)
     fenetre.blit(maison.skin, maison.position)
 
-    #Rafraichissement
-    pygame.display.flip()
+    
 
     print(env.is_finished2(voiture))
-    
+    #Rafraichissement
+    pygame.display.flip()

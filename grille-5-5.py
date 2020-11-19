@@ -71,6 +71,35 @@ class EnvGrid(object):
     def is_finished(self):
         return self.grid[self.y][self.x] == 1
 
+class Chat(object):
+    """docstring for Chat"""
+    def __init__(self, y, x):
+        super(Chat, self).__init__()
+        self.y, self.x = y, x
+
+    def step(self, action,env):
+        """
+            Action: 0 haut , 1 bas , 2 gauche , 3 droite
+        """
+        #env.grid[self.y][self.x] == 0
+    
+        
+
+        y2 = max(0, min(self.y + env.actions[action][0],4))
+        x2 = max(0, min(self.x + env.actions[action][1],4))
+        print(" chat  y2,x2 : ",y2,", ",x2)
+        # si la maison ne passe pas devant un mure
+        if env.grid[y2][x2] != -1:
+
+            env.grid[self.y][self.x] = 0
+            self.y = y2
+            self.x = x2 
+
+            env.grid[self.y][self.x] = 1  
+        print(" chat  y,x : ",self.y,", ",self.x)
+        #input()
+        return (self.y, self.x)
+
 def take_action(st, Q, eps):
     # Take an action
     if random.uniform(0, 1) < eps:
@@ -115,6 +144,7 @@ if __name__ == '__main__':
         [0, 0, 0, 0]
     ]
 
+    chat = Chat(4, 4)
     #print("dim : ",np.ndim(env.grid))
     # # entrainement
     for _ in range(2000):
@@ -139,7 +169,9 @@ if __name__ == '__main__':
     for s in range(1, 26):
         print(s, Q[s]) 
 
-    input()
+    #input()
+    changerC = 1
+
     # test
     st = env.reset()
     #j = 0
@@ -147,6 +179,13 @@ if __name__ == '__main__':
         #j +=1
         #print("j : ",j)
         env.show()
+        print("x,y init : ",chat.x,",",chat.y)
+        if changerC:
+            atM = int(input(">"))
+            yM, xM = chat.step(atM, env)
+            env.show()
+            changerM = int(input("\n>continuer à bouger la maison ? (0/1) "))
+
         print("x,y : ",env.x,",",env.y)
         #at = int(input("$>"))
         at = take_action(st, Q, 0.4)

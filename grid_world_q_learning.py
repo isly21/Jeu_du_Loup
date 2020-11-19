@@ -46,22 +46,6 @@ class EnvGrid(object):
 
         return (self.y*3+self.x+1) , self.grid[self.y][self.x]
 
-    def stepMaison(self, action):
-        """
-            Action: 0, 1, 2, 3
-        """
-        #env.grid[self.y][self.x] == 0
-        self.y = max(0, min(self.y + self.actions[action][0],2))
-        self.x = max(0, min(self.x + self.actions[action][1],2))
-
-        #env.grid[self.y][self.x] == 1
-
-        #print(env.grid)
-
-        print(" maison y,x : ",self.y,", ",self.x)
-        #input()
-        return (self.y*3+self.x+1) , self.grid[self.y][self.x]
-        #return (self.y, self.x)
 
     def show(self):
         """
@@ -127,23 +111,6 @@ def take_action(st, Q, eps):
 
     return action
 
-def deplacementMaison(action, env):
-    #Up action 0
-    #Down action 1
-    # Left action 2
-    # Right action 3
-    pass
-    # [0, 0, 1],  
-    # [0, -1, 0],
-    # [0, 0, 0]
-
-    # if action == 0 :
-    #     try:
-    #         env.grid = 
-    # elif action == 1:
-    #     try:
-    #         env.grid = 
-
 if __name__ == '__main__':
     env = EnvGrid()
     st = env.reset()
@@ -163,56 +130,70 @@ if __name__ == '__main__':
     ]
 
     # entrainement
-    for _ in range(100):
-        # Reset the game
-        st = env.reset()
-        while not env.is_finished():
-            #env.show()
-            #at = int(input("$>"))
-            at = take_action(st, Q, 0.4) # recuperer val max de Q
+    # for _ in range(100):
+    #     # Reset the game
+    #     st = env.reset()
+    #     while not env.is_finished():
+    #         #env.show()
+    #         #at = int(input("$>"))
+    #         at = take_action(st, Q, 0.4) # recuperer val max de Q
 
-            stp1, r = env.step(at)
+    #         stp1, r = env.step(at)
 
             
-            #print("s", stp1)
-            #print("r", r)
+    #         #print("s", stp1)
+    #         #print("r", r)
 
-            # Update Q function
+    #         # Update Q function
+    #         atp1 = take_action(stp1, Q, 0.1)
+    #         Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
+
+    #         st = stp1
+
+    for s in range(1, 10):
+        print(s, Q[s]) 
+
+    changerM = 1
+    # test
+    for _ in range(200):
+        st = env.reset()
+        while not env.is_finished():
+            
+            #print("x,y : ",env.x,",",env.y)
+            #actionM = int(input("$>"))
+            #env.stepMaison(1)
+            
+
+            if changerM:
+                env.show()
+                print("action : ",at)
+                atM = int(input(">"))
+                yM, xM = maison.step(atM, env)
+                
+                changerM = int(input("\n>continuer à bouger la maison ?"))
+            
+            
+            #maison.step(1,env)
+            #print(env.grid)
+            #input()
+            at = take_action(st, Q, 0.4)
+
+            stp1, r = env.step(at)
+            
+            # print("s", stp1)
+            #print("r")
+
+            # exploitation
             atp1 = take_action(stp1, Q, 0.0)
             Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
 
             st = stp1
 
-    for s in range(1, 10):
-        print(s, Q[s]) 
-
-    # test
-    st = env.reset()
-    while not env.is_finished():
-        env.show()
-        #print("x,y : ",env.x,",",env.y)
-        #actionM = int(input("$>"))
-        #env.stepMaison(1)
-        atM = int(input(">"))
-        yM, xM = maison.step(atM, env)
-
-        
-        #maison.step(1,env)
-        print(env.grid)
-        input()
-        at = take_action(st, Q, 0.4)
-
-        env.step(at)
-        print("action : ",at)
-        # print("s", stp1)
-        #print("r")
-
-        # exploitation
-        atp1 = take_action(stp1, Q, 0.1)
-        Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
-
         # st = stp1
     print("y,x : ",env.y,",",env.x)  
+
+    for s in range(1, 10):
+        print(s, Q[s]) 
     #env.show()
 
     #print("res",env.grid[2][2])

@@ -15,9 +15,9 @@ with contextlib.redirect_stdout(None): # permet de ne pas afficher le hello pygm
     from pygame.locals import *
 
 # dimensions de la fenetre 
-HEIGHT = 181 #270
+HEIGHT = 175 #270
 
-WIDTH = 181 #228
+WIDTH = 175 #228
 
 class Grid(object):
     
@@ -188,44 +188,65 @@ class Niveau:
 
  # Q = 8*49 
 class Chat(Perso):
-    def __init__(self, x, y, img="img/chat.png"):
-        return Perso.__init__(self,x,y,img)
+    def __init__(self, x, y,  y2, x2, img="img/chat.png"):
+        
+        Perso.__init__(self,x,y,img)
+        
+        self.y2 = y2
+        self.x2 = x2
 
-    def joueurC(self, event):
+        # @arg ent = grille 
+        # @arg event = evenement
+    def joueurC(self, event, env):
     	print("chat pos x,y = (",self.position.x,self.position.y,")")
+        
+        #Action: 0 haut , 1 bas , 2 gauche , 3 droite
+        
+
     	if event.type == KEYDOWN:
+           
 
             if event.key == K_DOWN: #Si "flèche bas"
                     
                     #si le perso n'est pas tout en bas 
                     if self.position.y < HEIGHT/1.5: 
+
                         #On descend le perso
+                        self.step(1,env)
                         self.position = self.position.move(0,35) 
-                    
+                        
+              
             if event.key == K_UP:   #Si "flèche haut"
 
-                
                 #print("pos y: ",self.position.y) 
-
+                
                 # si le perso n'est pas tout en haut
                 if self.position.y > 10:
                     #le perso monte
                     self.position = self.position.move(0,-35)
+                    self.step(0,env)
                     
 
             if event.key == K_LEFT: #Si "flèche gauche"
-
+                    self.step(2,env)
                     #si le perso n'est pas tout à gauche
                     if self.position.x > 11:
                     # le perso tourne à gauche
                        self.position = self.position.move(-35,0)   
                        #print("pos x: ",self.position.x) 
+                       
 
             if event.key == K_RIGHT: #Si "flèche droite"
                     #print("pos x: ",self.position.x) 
+                    self.step(3,env)
                     #si le perso n'est pas tout à gauche
                     if self.position.x < 140:#WIDTH:
                        self.position = self.position.move(35,0)   
+
+                       
+            env.show()
+            print(env.grid)
+            #input()
 
     def mouvement_circulaire(self):
     	
@@ -247,6 +268,25 @@ class Chat(Perso):
     def reset_position(self):
         self.position.x = 140
         self.position.y = 140
+
+    def step(self, action,env):
+        """
+            Action: 0 haut , 1 bas , 2 gauche , 3 droite
+        """
+        #env.grid[self.y][self.x] == 0
+    
+        
+
+        y2 = max(0, min(self.y2 + env.actions[action][0],4))
+        x2 = max(0, min(self.x2 + env.actions[action][1],4))
+        # si la maison ne passe pas devant un mure
+        if env.grid[y2][x2] != -1:
+
+            env.grid[self.y2][self.x2] = 0
+            self.y2 = y2
+            self.x2 = x2 
+            env.grid[self.y2][self.x2] = 1
+            
 
 class Loup(Perso):
     def __init__(self, x, y, img="img/loup2.png"):
@@ -353,7 +393,8 @@ for _ in range(2000):
 for s in range(1, 26):
     print(s, Q[s]) 
 
-#input()
+print(env.grid)
+input()
 # test
 st = env.reset()
 
@@ -364,11 +405,11 @@ pygame.init()
 fenetre = pygame.display.set_mode((HEIGHT, WIDTH))
 
 # création et chargement de la grille
-fond = pygame.image.load("img/grille.png").convert()
+fond = pygame.image.load("img/grille2.png").convert()
 
 
 #creation des persos
-chat = Chat(140,140)  #HEIGHT-30,WIDTH-30)
+chat = Chat(140,140, y2=4,x2=4)  #HEIGHT-30,WIDTH-30)
 loup = Loup(0,0) #5,4
 
 fenetre.blit(fond, (0,0))
@@ -390,7 +431,7 @@ continuer = 1
 # niveau.generer()
 nbCollisions = 0
 #BOUCLE INFINIE 
-while 1 and not env.is_finished2(loup):
+while 1 or not env.is_finished2(loup):
     fenetre.fill(pygame.Color("black"))
 
     clock.tick(30)
@@ -398,18 +439,24 @@ while 1 and not env.is_finished2(loup):
     key = pygame.key.get_pressed()
     for event in pygame.event.get():    #Attente des événements
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_F4 and (key[K_LALT] or key[K_LALT])): # on appuye sur alt+f4 pour quitter
-            #continuer = 0
             exit()
 
-        #chat.joueurC(event)
+        chat.joueurC(event,env)
         #loup.joueurL(event)
 
-
+        
     at = take_action(st, Q, 0.4)
 
     env.step2(at, loup)
+
     print("loup x,y : ",loup.position.x, "," , loup.position.y)
-    env.step(at)
+    stp1, r = env.step(at)
+
+    atp1 = take_action(stp1, Q, 0.1)
+    Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
+
+    st = stp1
+
 
     if  collision(loup,chat):
         nbCollisions +=1
@@ -418,13 +465,7 @@ while 1 and not env.is_finished2(loup):
         chat.reset_position()
         st = env.reset()
 
-        #print("collision : ",pygame.sprite.collide_mask(chat,loup))
-        #loup.collide2(chat)
-        #print("collides : ",collides(loup,chat))
 
-        # if(collision(loup,chat)):
-        # 	loup.reset_position()
-        # 	chat.reset_position()
 
     #niveau.afficher(fenetre)  
     fenetre.blit(fond, (0,0))
