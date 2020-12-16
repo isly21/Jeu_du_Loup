@@ -9,6 +9,7 @@ import numpy as np
 from random import randint
 import random
 import contextlib
+import time
 
 with contextlib.redirect_stdout(None): # permet de ne pas afficher le hello pygmame 
     import pygame
@@ -57,9 +58,12 @@ class Grid(object):
             Reset world
         """
         self.y = 0
-        self.x = 0
+        self.x = 4
         return 1 #(self.y*3+self.x+1)
-
+    """
+        @return:  step+1
+        @retun :  reward 
+    """
     def step(self, action):
         """
             Action: 0, 1, 2, 3
@@ -68,7 +72,7 @@ class Grid(object):
         self.y = max(0, min(self.y + self.actions[action][0],4))
         self.x = max(0, min(self.x + self.actions[action][1],4))
 
-        return (self.y*3+self.x+1) , self.grid[self.y][self.x]
+        return (self.y*5+self.x+1) , self.grid[self.y][self.x]
 
     # return l'état suivant 
     def step2(self, action, loup):
@@ -327,7 +331,7 @@ class Loup(Perso):
                    self.position = self.position.move(35,0)  
 
     def reset_position(self):
-        self.position.x = 0
+        self.position.x = 140
         self.position.y = 0
 
 def collision(perso1,perso2):
@@ -376,7 +380,7 @@ for _ in range(2000):
     st = env.reset()
     while not env.is_finished():
         #print("ok")
-        #env.show()
+        # env.show()
         #at = int(input("$>"))
         at = take_action(st, Q, 0.4) # recuperer val max de Q
 
@@ -390,7 +394,7 @@ for _ in range(2000):
 
         st = stp1
 
-for s in range(1, 26):
+for s in range(0, 25):
     print(s, Q[s]) 
 
 print(env.grid)
@@ -409,8 +413,8 @@ fond = pygame.image.load("img/grille2.png").convert()
 
 
 #creation des persos
-chat = Chat(140,140, y2=4,x2=4)  #HEIGHT-30,WIDTH-30)
-loup = Loup(0,0) #5,4
+chat = Chat(140,140, y2=4, x2=4)  #HEIGHT-30,WIDTH-30)
+loup = Loup(140,0) #5,4
 
 fenetre.blit(fond, (0,0))
 fenetre.blit(chat.skin, chat.position)
@@ -430,6 +434,8 @@ continuer = 1
 # niveau = Niveau('level1.txt')
 # niveau.generer()
 nbCollisions = 0
+count = 0
+
 #BOUCLE INFINIE 
 while 1 or not env.is_finished2(loup):
     fenetre.fill(pygame.Color("black"))
@@ -465,13 +471,21 @@ while 1 or not env.is_finished2(loup):
         chat.reset_position()
         st = env.reset()
 
+    # ecrit la Q table dans un fichier log tout les 200 itérations
+    if count % 200 == 0 :
+        with open('log.txt', 'w') as f:
+            for s in range(1, 26):
+                f.write("%s\n" % Q[s])
 
+        with open('log.txt', 'a') as f:      
+            f.write("%s\n" % time.ctime())  
+                #print(s, Q[s])
 
     #niveau.afficher(fenetre)  
     fenetre.blit(fond, (0,0))
     fenetre.blit(chat.skin, chat.position)
     fenetre.blit(loup.skin, loup.position)
 
-    
+    count += 1    
     #Rafraichissement
     pygame.display.flip()
