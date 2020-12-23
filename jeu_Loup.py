@@ -9,7 +9,6 @@ import numpy as np
 from random import randint
 import random
 import contextlib
-import time
 
 with contextlib.redirect_stdout(None): # permet de ne pas afficher le hello pygmame 
     import pygame
@@ -58,12 +57,9 @@ class Grid(object):
             Reset world
         """
         self.y = 0
-        self.x = 4
+        self.x = 0
         return 1 #(self.y*3+self.x+1)
-    """
-        @return:  step+1
-        @retun :  reward 
-    """
+
     def step(self, action):
         """
             Action: 0, 1, 2, 3
@@ -139,56 +135,56 @@ class Perso(pygame.sprite.Sprite):
 #       return True 
 
 class Niveau:
-	"""Classe permettant de créer un niveau"""
-	def __init__(self, fichier):
-		self.fichier = fichier
-		self.structure = 0
-	
-	
-	def generer(self):
-		"""Méthode permettant de générer le niveau en fonction du fichier.
-		On crée une liste générale, contenant une liste par ligne à afficher"""	
-		#On ouvre le fichier
-		with open(self.fichier, "r") as fichier:
-			structure_niveau = []
-			#On parcourt les lignes du fichier
-			for ligne in fichier:
-				ligne_niveau = []
-				#On parcourt les sprites (lettres) contenus dans le fichier
-				for sprite in ligne:
-					#On ignore les "\n" de fin de ligne
-					if sprite != '\n':
-						#On ajoute le sprite à la liste de la ligne
-						ligne_niveau.append(sprite)
-				#On ajoute la ligne à la liste du niveau
-				structure_niveau.append(ligne_niveau)
-			#On sauvegarde cette structure
-			self.structure = structure_niveau
-	
-	
-	def afficher(self, fenetre):
-		"""Méthode permettant d'afficher le niveau en fonction 
-		de la liste de structure renvoyée par generer()"""
-		#Chargement des images (seule celle d'arrivée contient de la transparence)
-		mur = pygame.image.load("img/mur1.png")
-		vide = pygame.image.load("img/carre1.png")
-		
-		
-		#On parcourt la liste du niveau
-		num_ligne = 0
-		for ligne in self.structure:
-			#On parcourt les listes de lignes
-			num_case = 0
-			for sprite in ligne:
-				#On calcule la position réelle en pixels
-				x = num_case * 35
-				y = num_ligne * 35
-				if sprite == '1':		   #m = Mur
-					fenetre.blit(mur, (x,y))
-				elif sprite == '0':		   #d = Départ
-					fenetre.blit(vide, (x,y))
-				num_case += 1
-			num_ligne += 1
+    """Classe permettant de créer un niveau"""
+    def __init__(self, fichier):
+        self.fichier = fichier
+        self.structure = 0
+    
+    
+    def generer(self):
+        """Méthode permettant de générer le niveau en fonction du fichier.
+        On crée une liste générale, contenant une liste par ligne à afficher""" 
+        #On ouvre le fichier
+        with open(self.fichier, "r") as fichier:
+            structure_niveau = []
+            #On parcourt les lignes du fichier
+            for ligne in fichier:
+                ligne_niveau = []
+                #On parcourt les sprites (lettres) contenus dans le fichier
+                for sprite in ligne:
+                    #On ignore les "\n" de fin de ligne
+                    if sprite != '\n':
+                        #On ajoute le sprite à la liste de la ligne
+                        ligne_niveau.append(sprite)
+                #On ajoute la ligne à la liste du niveau
+                structure_niveau.append(ligne_niveau)
+            #On sauvegarde cette structure
+            self.structure = structure_niveau
+    
+    
+    def afficher(self, fenetre):
+        """Méthode permettant d'afficher le niveau en fonction 
+        de la liste de structure renvoyée par generer()"""
+        #Chargement des images (seule celle d'arrivée contient de la transparence)
+        mur = pygame.image.load("img/mur1.png")
+        vide = pygame.image.load("img/carre1.png")
+        
+        
+        #On parcourt la liste du niveau
+        num_ligne = 0
+        for ligne in self.structure:
+            #On parcourt les listes de lignes
+            num_case = 0
+            for sprite in ligne:
+                #On calcule la position réelle en pixels
+                x = num_case * 35
+                y = num_ligne * 35
+                if sprite == '1':          #m = Mur
+                    fenetre.blit(mur, (x,y))
+                elif sprite == '0':        #d = Départ
+                    fenetre.blit(vide, (x,y))
+                num_case += 1
+            num_ligne += 1
 
  # Q = 8*49 
 class Chat(Perso):
@@ -202,12 +198,12 @@ class Chat(Perso):
         # @arg ent = grille 
         # @arg event = evenement
     def joueurC(self, event, env):
-    	print("chat pos x,y = (",self.position.x,self.position.y,")")
+        print("chat pos x,y = (",self.position.x,self.position.y,")")
         
         #Action: 0 haut , 1 bas , 2 gauche , 3 droite
         
 
-    	if event.type == KEYDOWN:
+        if event.type == KEYDOWN:
            
 
             if event.key == K_DOWN: #Si "flèche bas"
@@ -253,21 +249,21 @@ class Chat(Perso):
             #input()
 
     def mouvement_circulaire(self):
-    	
-		#gauche
-    	if self.position.x >= 12 and self.position.y ==198:
-    		for i in range(0,9):
-    			
-	    		self.position = self.position.move(-i,0)
-	    		print("pos y: ",self.position.y) 
-	    		pygame.time.delay(100)
-		#haut
-    	if self.position.x <= -12 and self.position.y <=198:
-    		for i in range(0,9):
-    			
-	    		self.position = self.position.move(0,-i)
-	    		print("pos y: ",self.position.y) 
-	    		pygame.time.delay(100)
+        
+        #gauche
+        if self.position.x >= 12 and self.position.y ==198:
+            for i in range(0,9):
+                
+                self.position = self.position.move(-i,0)
+                print("pos y: ",self.position.y) 
+                pygame.time.delay(100)
+        #haut
+        if self.position.x <= -12 and self.position.y <=198:
+            for i in range(0,9):
+                
+                self.position = self.position.move(0,-i)
+                print("pos y: ",self.position.y) 
+                pygame.time.delay(100)
 
     def reset_position(self):
         self.position.x = 140
@@ -297,9 +293,9 @@ class Loup(Perso):
         return Perso.__init__(self,x,y,img)
 
     def joueurL(self, event):
-    	print("loup pos x,y = (",self.position.x,self.position.y,")")
-    	#print("pos y: ",self.position.y) 
-    	if event.type == KEYDOWN:
+        print("loup pos x,y = (",self.position.x,self.position.y,")")
+        #print("pos y: ",self.position.y) 
+        if event.type == KEYDOWN:
 
             if event.key == K_s: #Si "flèche bas"
                     
@@ -331,16 +327,16 @@ class Loup(Perso):
                    self.position = self.position.move(35,0)  
 
     def reset_position(self):
-        self.position.x = 140
+        self.position.x = 0
         self.position.y = 0
 
 def collision(perso1,perso2):
-	#print("loup : ("perso1.position.x,",",perso1.position.y")")
-	if perso1.position.x == perso2.position.x and perso1.position.y == perso2.position.y:
-		print("collision")
-		return True
+    #print("loup : ("perso1.position.x,",",perso1.position.y")")
+    if perso1.position.x == perso2.position.x and perso1.position.y == perso2.position.y:
+        print("collision")
+        return True
 
-	return False
+    return False
 
 
 env = Grid()
@@ -380,7 +376,7 @@ for _ in range(2000):
     st = env.reset()
     while not env.is_finished():
         #print("ok")
-        # env.show()
+        #env.show()
         #at = int(input("$>"))
         at = take_action(st, Q, 0.4) # recuperer val max de Q
 
@@ -394,7 +390,7 @@ for _ in range(2000):
 
         st = stp1
 
-for s in range(0, 25):
+for s in range(1, 26):
     print(s, Q[s]) 
 
 print(env.grid)
@@ -403,7 +399,7 @@ input()
 st = env.reset()
 
 
-	
+    
 pygame.init()
 #Ouverture de la fenêtre Pygame
 fenetre = pygame.display.set_mode((HEIGHT, WIDTH))
@@ -413,8 +409,8 @@ fond = pygame.image.load("img/grille2.png").convert()
 
 
 #creation des persos
-chat = Chat(140,140, y2=4, x2=4)  #HEIGHT-30,WIDTH-30)
-loup = Loup(140,0) #5,4
+chat = Chat(140,140, y2=4,x2=4)  #HEIGHT-30,WIDTH-30)
+loup = Loup(0,0) #5,4
 
 fenetre.blit(fond, (0,0))
 fenetre.blit(chat.skin, chat.position)
@@ -434,8 +430,6 @@ continuer = 1
 # niveau = Niveau('level1.txt')
 # niveau.generer()
 nbCollisions = 0
-count = 0
-
 #BOUCLE INFINIE 
 while 1 or not env.is_finished2(loup):
     fenetre.fill(pygame.Color("black"))
@@ -458,6 +452,19 @@ while 1 or not env.is_finished2(loup):
     print("loup x,y : ",loup.position.x, "," , loup.position.y)
     stp1, r = env.step(at)
 
+    d = max(abs(chat.x2 - env.x), np.absolute(chat.y2 - env.y))
+
+    print("d :", d)
+    print("r :", d)
+
+    if d ==0: 
+        r = 100
+    elif d == 1:
+        print("à coté") 
+        # input()  
+    # else:
+    #     r = 0
+
     atp1 = take_action(stp1, Q, 0.1)
     Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
 
@@ -471,21 +478,13 @@ while 1 or not env.is_finished2(loup):
         chat.reset_position()
         st = env.reset()
 
-    # ecrit la Q table dans un fichier log tout les 200 itérations
-    if count % 200 == 0 :
-        with open('log.txt', 'w') as f:
-            for s in range(1, 26):
-                f.write("%s\n" % Q[s])
 
-        with open('log.txt', 'a') as f:      
-            f.write("%s\n" % time.ctime())  
-                #print(s, Q[s])
 
     #niveau.afficher(fenetre)  
     fenetre.blit(fond, (0,0))
     fenetre.blit(chat.skin, chat.position)
     fenetre.blit(loup.skin, loup.position)
 
-    count += 1    
+    
     #Rafraichissement
     pygame.display.flip()
