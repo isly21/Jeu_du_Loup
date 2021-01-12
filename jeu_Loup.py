@@ -78,7 +78,7 @@ class Grid(object):
         print("action :",action)
         loup.position.y = max(0, min(loup.position.y + self.actions2[action][1],140)) #1 0
         loup.position.x = max(0, min(loup.position.x + self.actions2[action][0],140)) #0 0
-        pygame.time.wait(125)
+        pygame.time.wait(500)
 
 
     def show(self):
@@ -426,6 +426,7 @@ clock = pygame.time.Clock()
 
 continuer = 1
 
+total_step = 0
 
 # niveau = Niveau('level1.txt')
 # niveau.generer()
@@ -444,7 +445,8 @@ while 1 or not env.is_finished2(loup):
         chat.joueurC(event,env)
         #loup.joueurL(event)
 
-        
+    total_step += 1 
+
     at = take_action(st, Q, 0.4)
 
     env.step2(at, loup)
@@ -478,7 +480,9 @@ while 1 or not env.is_finished2(loup):
         chat.reset_position()
         st = env.reset()
 
-
+    performance = nbCollisions/total_step
+    
+    print("performance : ", performance) 
 
     #niveau.afficher(fenetre)  
     fenetre.blit(fond, (0,0))
