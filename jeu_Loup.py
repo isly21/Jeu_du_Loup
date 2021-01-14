@@ -191,7 +191,7 @@ deplacement = 110
 
  # Q = 8*49 
 class Chat(Perso):
-    def __init__(self, x, y,  y2, x2, img="img/chat2.png"):
+    def __init__(self, x, y,  y2, x2, img="img/chaaat.png"):
         
         Perso.__init__(self,x,y,img)
         
@@ -293,7 +293,7 @@ class Chat(Perso):
 
 
 class Loup(Perso):
-    def __init__(self, x, y, img="img/loup3.png"):
+    def __init__(self, x, y, img="img/louuup.png"):
         return Perso.__init__(self,x,y,img)
 
     def joueurL(self, event):
