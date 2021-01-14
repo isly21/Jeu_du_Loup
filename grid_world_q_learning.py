@@ -35,13 +35,16 @@ class EnvGrid(object):
         self.y = 2
         self.x = 0
         return (self.y*3+self.x+1)
-
+        """
+            @return:  step+1
+            @retun :  reward 
+        """
     def step(self, action):
         """
             Action: 0, 1, 2, 3
         """
-
-        self.y = max(0, min(self.y + self.actions[action][0],2))
+        
+        self.y = max(0, min(self.y + self.actions[action][0], 2))
         self.x = max(0, min(self.x + self.actions[action][1],2))
 
         return (self.y*3+self.x+1) , self.grid[self.y][self.x]
@@ -82,6 +85,7 @@ class Maison(object):
 
         y2 = max(0, min(self.y + env.actions[action][0],2))
         x2 = max(0, min(self.x + env.actions[action][1],2))
+        
         # si la maison ne passe pas devant un mure
         if env.grid[y2][x2] != -1:
 
@@ -159,18 +163,21 @@ if __name__ == '__main__':
         st = env.reset()
         while not env.is_finished():
             
+
+            env.show()
+
             #print("x,y : ",env.x,",",env.y)
             #actionM = int(input("$>"))
             #env.stepMaison(1)
             
 
-            if changerM:
-                env.show()
-                print("action : ",at)
-                atM = int(input(">"))
-                yM, xM = maison.step(atM, env)
+            # if changerM:
+            #     env.show()
+            #     print("action : ",at)
+            #     atM = int(input(">"))
+            #     yM, xM = maison.step(atM, env)
                 
-                changerM = int(input("\n>continuer à bouger la maison ?"))
+            #     changerM = int(input("\n>continuer à bouger la maison ?"))
             
             
             #maison.step(1,env)
@@ -185,6 +192,7 @@ if __name__ == '__main__':
 
             # exploitation
             atp1 = take_action(stp1, Q, 0.0)
+            
             Q[st][at] = Q[st][at] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][at])
 
             st = stp1
@@ -195,6 +203,7 @@ if __name__ == '__main__':
     for s in range(1, 10):
         print(s, Q[s]) 
     #env.show()
+    print("actions 0,0 : ",env.actions[0][0])
 
     #print("res",env.grid[2][2])
      # [-1, 0], # Up action 0
