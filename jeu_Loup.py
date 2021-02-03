@@ -187,11 +187,13 @@ class Niveau:
             num_ligne += 1
 
 
+
+
 deplacement = 110
 
  # Q = 8*49 
 class Chat(Perso):
-    def __init__(self, x, y,  y2, x2, img="img/chat2.png"):
+    def __init__(self, x, y,  y2, x2, img="img/chat3.png"):
         
         Perso.__init__(self,x,y,img)
         
@@ -293,7 +295,7 @@ class Chat(Perso):
 
 
 class Loup(Perso):
-    def __init__(self, x, y, img="img/loup3.png"):
+    def __init__(self, x, y, img="img/loup.png"):
         return Perso.__init__(self,x,y,img)
 
     def joueurL(self, event):
@@ -399,11 +401,11 @@ for s in range(1, 26):
 
 print(env.grid)
 
-input()
+# input()
 # test
 st = env.reset()
 
-
+groupe = pygame.sprite.Group()
     
 pygame.init()
 #Ouverture de la fenêtre Pygame
@@ -416,6 +418,10 @@ fond = pygame.image.load("img/grille.png").convert()
 #creation des persos
 chat = Chat(440,440, y2=4,x2=4)  #HEIGHT-30,WIDTH-30)
 loup = Loup(0,0) #5,4
+
+# groupe.add(chat)
+# groupe.add(loup)
+# groupe.add(fond)
 
 fenetre.blit(fond, (0,0))
 fenetre.blit(chat.skin, chat.position)
@@ -487,14 +493,20 @@ while 1 or not env.is_finished2(loup):
         chat.reset_position()
         st = env.reset()
 
+    # if nbCollisions >= 5:
+    #     fond = pygame.image.load("img/win.jpg")
+    #     fenetre.blit(fond, (0,0))
+    #     # chat = None
+    #     print("ok win")
+        # input()
+
     #performance = nbCollisions/total_step
     
     #print("performance : ", performance) 
-
-    #niveau.afficher(fenetre)  
-    fenetre.blit(fond, (0,0))
-    fenetre.blit(chat.skin, chat.position)
-    fenetre.blit(loup.skin, loup.position)
+    else:  
+        fenetre.blit(fond, (0,0))
+        fenetre.blit(chat.skin, chat.position)
+        fenetre.blit(loup.skin, loup.position)
 
     
     #Rafraichissement
