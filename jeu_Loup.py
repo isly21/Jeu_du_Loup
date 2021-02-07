@@ -1,9 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
+import pygame
+import random
+import time
+import subprocess
 import  sys, os
 import numpy as np
 from random import randint
@@ -18,7 +16,10 @@ with contextlib.redirect_stdout(None): # permet de ne pas afficher le hello pygm
 HEIGHT = 550#175 
 
 WIDTH = 550#175 
-
+pygame.display.set_caption("Wolf game")
+icone = pygame.image.load('assests/wolficone.png')
+pygame.display.set_icon(icone)
+    
 class Grid(object):
     
     def __init__(self):
@@ -187,15 +188,11 @@ class Niveau:
             num_ligne += 1
 
 
-
-
 deplacement = 110
 
  # Q = 8*49 
 class Chat(Perso):
-
-    def __init__(self, x, y,  y2, x2, img="img/chat3.png"):
-
+    def __init__(self, x, y,  y2, x2, img="img/chaaat.png"):
         
         Perso.__init__(self,x,y,img)
         
@@ -297,8 +294,7 @@ class Chat(Perso):
 
 
 class Loup(Perso):
-    def __init__(self, x, y, img="img/loup.png"):
-
+    def __init__(self, x, y, img="img/louuup.png"):
         return Perso.__init__(self,x,y,img)
 
     def joueurL(self, event):
@@ -404,11 +400,11 @@ for s in range(1, 26):
 
 print(env.grid)
 
-# input()
+input()
 # test
 st = env.reset()
 
-groupe = pygame.sprite.Group()
+
     
 pygame.init()
 #Ouverture de la fenêtre Pygame
@@ -421,10 +417,6 @@ fond = pygame.image.load("img/grille.png").convert()
 #creation des persos
 chat = Chat(440,440, y2=4,x2=4)  #HEIGHT-30,WIDTH-30)
 loup = Loup(0,0) #5,4
-
-# groupe.add(chat)
-# groupe.add(loup)
-# groupe.add(fond)
 
 fenetre.blit(fond, (0,0))
 fenetre.blit(chat.skin, chat.position)
@@ -496,20 +488,14 @@ while 1 or not env.is_finished2(loup):
         chat.reset_position()
         st = env.reset()
 
-    # if nbCollisions >= 5:
-    #     fond = pygame.image.load("img/win.jpg")
-    #     fenetre.blit(fond, (0,0))
-    #     # chat = None
-    #     print("ok win")
-        # input()
-
     #performance = nbCollisions/total_step
     
     #print("performance : ", performance) 
-    else:  
-        fenetre.blit(fond, (0,0))
-        fenetre.blit(chat.skin, chat.position)
-        fenetre.blit(loup.skin, loup.position)
+
+    #niveau.afficher(fenetre)  
+    fenetre.blit(fond, (0,0))
+    fenetre.blit(chat.skin, chat.position)
+    fenetre.blit(loup.skin, loup.position)
 
     
     #Rafraichissement
